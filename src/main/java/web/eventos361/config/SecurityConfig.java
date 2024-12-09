@@ -38,9 +38,9 @@ public class SecurityConfig {
                                                 // Uma página de login customizada
                                                 .loginPage("/login")
                                                 // Define a URL para onde o usuário será redirecionado após o login
-                                                .defaultSuccessUrl("/index.html")
+                                                .defaultSuccessUrl("/")
                                                 // Define a URL para o caso de falha no login
-                                                // .failureUrl("/login-error")
+//                                                 .failureUrl("/index.html")
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
@@ -57,14 +57,9 @@ public class SecurityConfig {
         @Bean
         public UserDetailsService userDetailsService(DataSource dataSource) {
                 JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-                manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo "
-                                + "from usuario "
-                                + "where nome_usuario = ?");
-//                manager.setAuthoritiesByUsernameQuery(
-//                                "SELECT tab.nome_usuario , papel.nome FROM"
-//                                                + "(SELECT usuario.nome_usuario , usuario.codigo FROM usuario WHERE nome_usuario = ?) as tab "
-//                                                + " INNER JOIN usuario_papel ON codigo_usuario = tab.codigo "
-//                                                + " INNER JOIN papel ON codigo_papel = papel.codigo;");
+                manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo from usuario where nome_usuario = ?");
+                // Defina uma consulta de authorities vazia para garantir que não seja usada
+                manager.setAuthoritiesByUsernameQuery("select nome_usuario, 'ROLE_USER' from usuario where nome_usuario = ?");
                 return manager;
         }
 
