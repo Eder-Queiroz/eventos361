@@ -27,18 +27,19 @@ public class SecurityConfig {
                                                 // Qualquer um pode fazer requisições para essas URLs
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/index.html")
                                                 .permitAll()
+                                                .requestMatchers("usuarios/cadastrar").permitAll()
                                                 // Um usuário autenticado e com o papel ADMIN pode fazer requisições
                                                 // para essas
                                                 // URLs
 //                                                .requestMatchers("/vacinas/nova").hasRole("ADMIN")
 //                                                .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
 //                                                 .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
-                                                .anyRequest().permitAll())
+                                                .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 // Uma página de login customizada
                                                 .loginPage("/login")
                                                 // Define a URL para onde o usuário será redirecionado após o login
-                                                .defaultSuccessUrl("/")
+                                                .defaultSuccessUrl("/eventos/buscar")
                                                 // Define a URL para o caso de falha no login
 //                                                 .failureUrl("/index.html")
                                                 .permitAll())

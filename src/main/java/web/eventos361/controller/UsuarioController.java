@@ -1,7 +1,5 @@
 package web.eventos361.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTriggerAfterSwap;
 import jakarta.validation.Valid;
-import web.eventos361.model.Papel;
 import web.eventos361.model.Usuario;
 import web.eventos361.notificacao.NotificacaoSweetAlert2;
 import web.eventos361.notificacao.TipoNotificaoSweetAlert2;

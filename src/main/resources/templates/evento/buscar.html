@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Página Principal</title>
+</head>
+<body>
+<!-- conteudo principal -->
+<main layout:fragment="conteudo" th:fragment="formulario" id="main" class="w-full">
+    <div class="m-10">
+        <div class="relative w-full">
+            <h1 class="text-3xl">Eventos</h1>
+        </div>
+    </div>
+
+    <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+</main>
+</body>
+</html>
