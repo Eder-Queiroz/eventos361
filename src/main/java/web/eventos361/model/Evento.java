@@ -1,6 +1,7 @@
 package web.eventos361.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import jakarta.persistence.*;
@@ -50,6 +51,10 @@ public class Evento {
 
     public LocalDate getDataEvento() {
         return dataEvento;
+    }
+
+    public String getDataEventoFormatada() {
+        return dataEvento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public void setDataEvento(LocalDate dataEvento) {
