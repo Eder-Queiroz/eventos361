@@ -45,10 +45,6 @@ public class Usuario implements Serializable {
 	@NotNull(message = "A data de nascimento do usuário é obrigatória")
 	private LocalDate dataNascimento;
 	private boolean ativo;
-	@ManyToMany
-	@JoinTable(name = "usuario_papel", joinColumns = @JoinColumn(name = "codigo_usuario"), inverseJoinColumns = @JoinColumn(name = "codigo_papel"))
-	@Size(min = 1, message = "O usuário deve ter ao menos um papel no sistema")
-	private List<Papel> papeis = new ArrayList<>();
 
 	public Long getCodigo() {
 		return codigo;
@@ -104,22 +100,6 @@ public class Usuario implements Serializable {
 
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
-	}
-
-	public void adicionarPapel(Papel papel) {
-		papeis.add(papel);
-	}
-
-	public void removerPapel(Papel papel) {
-		papeis.remove(papel);
-	}
-
-	public List<Papel> getPapeis() {
-		return papeis;
-	}
-
-	public void setPapeis(List<Papel> papeis) {
-		this.papeis = papeis;
 	}
 
 	@Override

@@ -30,9 +30,9 @@ public class SecurityConfig {
                                                 // Um usuário autenticado e com o papel ADMIN pode fazer requisições
                                                 // para essas
                                                 // URLs
-                                                .requestMatchers("/vacinas/nova").hasRole("ADMIN")
-                                                .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
-                                                // .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
+//                                                .requestMatchers("/vacinas/nova").hasRole("ADMIN")
+//                                                .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
+//                                                 .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
                                                 .anyRequest().permitAll())
                                 .formLogin(form -> form
                                                 // Uma página de login customizada
@@ -60,11 +60,11 @@ public class SecurityConfig {
                 manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo "
                                 + "from usuario "
                                 + "where nome_usuario = ?");
-                manager.setAuthoritiesByUsernameQuery(
-                                "SELECT tab.nome_usuario , papel.nome FROM"
-                                                + "(SELECT usuario.nome_usuario , usuario.codigo FROM usuario WHERE nome_usuario = ?) as tab "
-                                                + " INNER JOIN usuario_papel ON codigo_usuario = tab.codigo "
-                                                + " INNER JOIN papel ON codigo_papel = papel.codigo;");
+//                manager.setAuthoritiesByUsernameQuery(
+//                                "SELECT tab.nome_usuario , papel.nome FROM"
+//                                                + "(SELECT usuario.nome_usuario , usuario.codigo FROM usuario WHERE nome_usuario = ?) as tab "
+//                                                + " INNER JOIN usuario_papel ON codigo_usuario = tab.codigo "
+//                                                + " INNER JOIN papel ON codigo_papel = papel.codigo;");
                 return manager;
         }
 
