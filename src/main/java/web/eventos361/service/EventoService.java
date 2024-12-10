@@ -23,4 +23,8 @@ public class EventoService {
     public void alterar(Evento evento) {
         eventoRepository.save(evento);
     }
+
+    public Evento buscarPorCodigo(Long codigo) {
+        return eventoRepository.findById(codigo).orElse(null);
+    }
 }

@@ -1,5 +1,7 @@
 package web.eventos361.controller;
 
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxLocation;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -24,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.eventos361.filter.EventoFilter;
 import web.eventos361.model.Evento;
 import web.eventos361.model.Usuario;
+import web.eventos361.notificacao.NotificacaoSweetAlert2;
+import web.eventos361.notificacao.TipoNotificaoSweetAlert2;
 import web.eventos361.pagination.PageWrapper;
 import web.eventos361.repository.EventoRepository;
 import web.eventos361.service.CadastroUsuarioService;
@@ -110,6 +114,37 @@ public class EventoController {
     public String abrirAlterarHTMX(Evento evento) {
         logger.info("Abrindo o formulário para alterar o evento: {}", evento);
         return "evento/alterar :: formulario";
+    }
+
+    @HxRequest
+    @PostMapping("/alterar")
+    public String alterarHTMX(@Valid Evento evento, BindingResult result, HtmxResponse.Builder htmxResponse) {
+        if (result.hasErrors()) {
+            logger.info("O evento recebido para alterar não é válida.");
+            logger.info("Erros encontrados:");
+            for (FieldError erro : result.getFieldErrors()) {
+                logger.info("{}", erro);
+            }
+            return "evento/alterar :: formulario";
+        } else {
+            Evento eventoSalvo = eventoService.buscarPorCodigo(evento.getCodigo());
+            evento.setUsuario(eventoSalvo.getUsuario());
+            eventoService.alterar(evento);
+            HtmxLocation hl = new HtmxLocation("/eventos/sucesso2");
+            hl.setTarget("#main");
+            hl.setSwap("outerHTML");
+            htmxResponse.location(hl);
+            return "mensagem";
+        }
+    }
+
+    @HxRequest
+    @HxTriggerAfterSwap("htmlAtualizado")
+    @GetMapping("/sucesso2")
+    public String abrirMensagemSucesso2HTMX(Model model) {
+        model.addAttribute("notificacao", new NotificacaoSweetAlert2("Evento alterada com sucesso!",
+                TipoNotificaoSweetAlert2.SUCCESS, 4000));
+        return "evento/pesquisar :: formulario";
     }
 
 }
