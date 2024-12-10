@@ -25,7 +25,7 @@ public class Evento {
     private LocalDate dataEvento;
     @NotBlank(message = "O local do evento é obrigatório")
     private String local;
-    @NotBlank(message = "A capacidade do evento é obrigatória")
+    @NotNull(message = "A capacidade do evento é obrigatória")
     private Long capacidade;
     @Column(name = "finalizou_em")
     private LocalDate finalizouEm;

@@ -37,6 +37,8 @@ public class Usuario implements Serializable {
 	@NotNull(message = "A data de nascimento do usuário é obrigatória")
 	private LocalDate dataNascimento;
 	private boolean ativo;
+	@Column(name = "is_palestrante")
+	private boolean isPalestrante;
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Evento> eventos = new ArrayList<>();
 
@@ -104,17 +106,23 @@ public class Usuario implements Serializable {
 		this.eventos = eventos;
 	}
 
+	public boolean isPalestrante() {
+		return isPalestrante;
+	}
+
+	public void setPalestrante(boolean palestrante) {
+		isPalestrante = palestrante;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
 		Usuario usuario = (Usuario) o;
-		return ativo == usuario.ativo && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos);
+		return ativo == usuario.ativo && isPalestrante == usuario.isPalestrante && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, eventos);
+		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, isPalestrante, eventos);
 	}
-
-
 }

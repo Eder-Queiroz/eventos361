@@ -9,6 +9,7 @@ CREATE TABLE public.usuario
     senha text,
     data_nascimento date,
     ativo boolean,
+    is_palestrante boolean DEFAULT false,
     PRIMARY KEY (codigo)
 );
 
