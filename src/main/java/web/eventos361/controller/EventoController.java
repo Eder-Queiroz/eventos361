@@ -104,4 +104,12 @@ public class EventoController {
 
     }
 
+    @PostMapping("/abriralterar")
+    @HxRequest
+    @HxTriggerAfterSwap("htmlAtualizado")
+    public String abrirAlterarHTMX(Evento evento) {
+        logger.info("Abrindo o formulário para alterar o evento: {}", evento);
+        return "evento/alterar :: formulario";
+    }
+
 }

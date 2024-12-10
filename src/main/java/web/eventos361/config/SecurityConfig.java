@@ -29,6 +29,7 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers("usuarios/cadastrar").permitAll()
                                                 .requestMatchers("eventos/novo").hasAuthority("PALESTRANTE")
+                                                .requestMatchers("eventos/abriralterar").hasAuthority("PALESTRANTE")
                                                 // Um usuário autenticado e com o papel ADMIN pode fazer requisições
                                                 // para essas
                                                 // URLs
