@@ -85,7 +85,7 @@ public class EventoController {
     @PostMapping("/novo")
     @HxRequest
     @HxTriggerAfterSwap("htmlAtualizado")
-    public String cadastrarNovoUsuario(@Valid Evento evento, BindingResult resultado, Model model, RedirectAttributes redirectAttributes, Authentication authentication) {
+    public String cadastrarNovoUsuario(@Valid Evento evento, BindingResult resultado, Model model,  HtmxResponse.Builder htmxResponse, RedirectAttributes redirectAttributes, Authentication authentication) {
         logger.info("Recebendo um novo evento para cadastrar: {}", evento);
         if (resultado.hasErrors()) {
             logger.info("O Evento recebido para cadastrar não é válido.");
@@ -103,8 +103,11 @@ public class EventoController {
 
         evento.setUsuario(usuario);
         eventoService.salvar(evento);
-        redirectAttributes.addAttribute("mensagem", "Cadastro de usuário efetuado com sucesso.");
-        return "evento/pesquisar :: formulario";
+        HtmxLocation hl = new HtmxLocation("/eventos/sucesso1");
+        hl.setTarget("#main");
+        hl.setSwap("outerHTML");
+        htmxResponse.location(hl);
+        return "mensagem";
 
     }
 
@@ -136,6 +139,15 @@ public class EventoController {
             htmxResponse.location(hl);
             return "mensagem";
         }
+    }
+
+    @HxRequest
+    @HxTriggerAfterSwap("htmlAtualizado")
+    @GetMapping("/sucesso1")
+    public String abrirMensagemSucesso1HTMX(Model model) {
+        model.addAttribute("notificacao", new NotificacaoSweetAlert2("Evento criado com sucesso!",
+                TipoNotificaoSweetAlert2.SUCCESS, 4000));
+        return "evento/pesquisar :: formulario";
     }
 
     @HxRequest
