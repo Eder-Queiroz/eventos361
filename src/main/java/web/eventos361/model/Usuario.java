@@ -41,6 +41,8 @@ public class Usuario implements Serializable {
 	private boolean isPalestrante;
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Evento> eventos = new ArrayList<>();
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Participante> participantes = new ArrayList<>();
 
 	public Long getCodigo() {
 		return codigo;
@@ -114,15 +116,23 @@ public class Usuario implements Serializable {
 		isPalestrante = palestrante;
 	}
 
+	public List<Participante> getParticipantes() {
+		return participantes;
+	}
+
+	public void setParticipantes(List<Participante> participantes) {
+		this.participantes = participantes;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
 		Usuario usuario = (Usuario) o;
-		return ativo == usuario.ativo && isPalestrante == usuario.isPalestrante && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos);
+		return ativo == usuario.ativo && isPalestrante == usuario.isPalestrante && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos) && Objects.equals(participantes, usuario.participantes);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, isPalestrante, eventos);
+		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, isPalestrante, eventos, participantes);
 	}
 }

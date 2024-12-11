@@ -2,6 +2,8 @@ package web.eventos361.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.*;
@@ -32,6 +34,8 @@ public class Evento {
     @ManyToOne
     @JoinColumn(name = "codigo_usuario", referencedColumnName = "codigo", nullable = false, foreignKey = @ForeignKey(name = "fk_evento_usuario"))
     private Usuario usuario;
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participante> participantes = new ArrayList<>();
 
     public Long getCodigo() {
         return codigo;
@@ -99,16 +103,24 @@ public class Evento {
         }
     }
 
+    public List<Participante> getParticipantes() {
+        return participantes;
+    }
+
+    public void setParticipantes(List<Participante> participantes) {
+        this.participantes = participantes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Evento evento = (Evento) o;
-        return Objects.equals(codigo, evento.codigo) && Objects.equals(nome, evento.nome) && Objects.equals(dataEvento, evento.dataEvento) && Objects.equals(local, evento.local) && Objects.equals(capacidade, evento.capacidade) && Objects.equals(finalizouEm, evento.finalizouEm) && Objects.equals(usuario, evento.usuario);
+        return Objects.equals(codigo, evento.codigo) && Objects.equals(nome, evento.nome) && Objects.equals(dataEvento, evento.dataEvento) && Objects.equals(local, evento.local) && Objects.equals(capacidade, evento.capacidade) && Objects.equals(finalizouEm, evento.finalizouEm) && Objects.equals(usuario, evento.usuario) && Objects.equals(participantes, evento.participantes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo, nome, dataEvento, local, capacidade, finalizouEm, usuario);
+        return Objects.hash(codigo, nome, dataEvento, local, capacidade, finalizouEm, usuario, participantes);
     }
 
     @Override
@@ -118,9 +130,10 @@ public class Evento {
                 ", nome='" + nome + '\'' +
                 ", dataEvento=" + dataEvento +
                 ", local='" + local + '\'' +
-                ", capaccidade=" + capacidade +
+                ", capacidade=" + capacidade +
                 ", finalizouEm=" + finalizouEm +
                 ", usuario=" + usuario +
+                ", participantes=" + participantes +
                 '}';
     }
 }
