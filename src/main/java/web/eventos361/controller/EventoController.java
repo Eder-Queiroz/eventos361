@@ -25,6 +25,7 @@ import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTriggerAfterSwap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.eventos361.filter.EventoFilter;
 import web.eventos361.model.Evento;
+import web.eventos361.model.Participante;
 import web.eventos361.model.Usuario;
 import web.eventos361.notificacao.NotificacaoSweetAlert2;
 import web.eventos361.notificacao.TipoNotificaoSweetAlert2;
@@ -192,6 +193,45 @@ public class EventoController {
         logger.info("Evento finalizado: {}", evento);
 
         model.addAttribute("notificacao", new NotificacaoSweetAlert2("Evento encerrado com sucesso!",
+                TipoNotificaoSweetAlert2.SUCCESS, 4000));
+
+        return "evento/pesquisar :: formulario";
+    }
+
+    @HxRequest
+    @HxTriggerAfterSwap("htmlAtualizado")
+    @PostMapping("/participar")
+    public String participarHTMX(Long codigo, Model model, Authentication authentication) {
+
+        logger.info("Participando do evento com o código: {}", codigo);
+
+        String nomeUsuario = authentication.getName();
+        Evento evento = eventoService.buscarPorCodigo(codigo);
+
+        if(evento.getUsuario().getNomeUsuario().equals(nomeUsuario)){
+            model.addAttribute("notificacao", new NotificacaoSweetAlert2("Você não pode participar do seu próprio evento!",
+                    TipoNotificaoSweetAlert2.WARNING, 4000));
+            return "evento/pesquisar :: formulario";
+        }
+
+        Usuario usuario = cadastroUsuarioService.pesquisarPorNome(nomeUsuario);
+
+        Participante existeParticipante = participanteService.buscarUsuarioNoEvento(usuario, evento);
+
+        if (existeParticipante != null) {
+            model.addAttribute("notificacao", new NotificacaoSweetAlert2("Você já está participando do evento!",
+                    TipoNotificaoSweetAlert2.WARNING, 4000));
+            return "evento/pesquisar :: formulario";
+        }
+
+        Participante participante = new Participante();
+        participante.setEvento(evento);
+        participante.setUsuario(usuario);
+        participanteService.salvar(participante);
+
+        logger.info("Usuário participando do evento: {}", usuario);
+
+        model.addAttribute("notificacao", new NotificacaoSweetAlert2("Você está participando do evento!",
                 TipoNotificaoSweetAlert2.SUCCESS, 4000));
 
         return "evento/pesquisar :: formulario";
