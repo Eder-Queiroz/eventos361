@@ -25,7 +25,7 @@
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Local</th>
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Capacidade</th>
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Palestrantes</th>
-              <th scope="col" colspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
+              <th sec:authorize="hasRole('PALESTRANTE')" scope="col" colspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
             </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
               <td th:text="${evento.local}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
               <td th:text="${evento.capacidade}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">11</td>
               <td th:text="${evento.usuario.nome}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">John</td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 flex gap-2 justify-center">
+              <td sec:authorize="hasRole('PALESTRANTE')" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 flex gap-2 justify-center">
                 <form th:hx-post="@{/eventos/abriralterar}" hx-target="#main" hx-swap="outerHTML">
                   <input type="hidden" name="codigo" th:value="${evento.codigo}" />
                   <input type="hidden" name="nome" th:value="${evento.nome}" />
