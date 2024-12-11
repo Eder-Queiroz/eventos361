@@ -114,9 +114,17 @@ public class EventoController {
     @PostMapping("/abriralterar")
     @HxRequest
     @HxTriggerAfterSwap("htmlAtualizado")
-    public String abrirAlterarHTMX(Evento evento) {
+    public String abrirAlterarHTMX(Evento evento, Model model, Authentication authentication) {
         logger.info("Abrindo o formulário para alterar o evento: {}", evento);
-        return "evento/alterar :: formulario";
+        String nomeUsuario = authentication.getName();
+
+        if(evento.getUsuario().getNomeUsuario().equals(nomeUsuario)){
+            return "evento/alterar :: formulario";
+        }
+
+        model.addAttribute("notificacao", new NotificacaoSweetAlert2("Você não pode alterar esse evento!",
+                TipoNotificaoSweetAlert2.WARNING, 4000));
+        return "evento/pesquisar :: formulario";
     }
 
     @HxRequest
@@ -162,11 +170,19 @@ public class EventoController {
     @HxRequest
     @HxTriggerAfterSwap("htmlAtualizado")
     @PostMapping("/finalizar")
-    public String finalizarHTMX(Long codigo, Model model) {
+    public String finalizarHTMX(Long codigo, Model model, Authentication authentication) {
 
         logger.info("Finalizando o evento com o código: {}", codigo);
 
+        String nomeUsuario = authentication.getName();
         Evento evento = eventoService.buscarPorCodigo(codigo);
+
+        if(!evento.getUsuario().getNomeUsuario().equals(nomeUsuario)){
+            model.addAttribute("notificacao", new NotificacaoSweetAlert2("Você não pode finalizar esse evento!",
+                    TipoNotificaoSweetAlert2.WARNING, 4000));
+            return "evento/pesquisar :: formulario";
+        }
+
         evento.finalizar();
         eventoService.alterar(evento);
 
