@@ -32,6 +32,7 @@ import web.eventos361.pagination.PageWrapper;
 import web.eventos361.repository.EventoRepository;
 import web.eventos361.service.CadastroUsuarioService;
 import web.eventos361.service.EventoService;
+import web.eventos361.service.ParticipanteService;
 
 @Controller
 @RequestMapping("/eventos")
@@ -42,11 +43,13 @@ public class EventoController {
     private EventoService eventoService;
     private EventoRepository eventoRepository;
     private CadastroUsuarioService cadastroUsuarioService;
+    private ParticipanteService participanteService;
 
-    public EventoController(EventoRepository eventoRepository, EventoService eventoService, CadastroUsuarioService cadastroUsuarioService) {
+    public EventoController(EventoRepository eventoRepository, EventoService eventoService, CadastroUsuarioService cadastroUsuarioService, ParticipanteService participanteService) {
         this.eventoRepository = eventoRepository;
         this.eventoService = eventoService;
         this.cadastroUsuarioService = cadastroUsuarioService;
+        this.participanteService = participanteService;
     }
 
     @GetMapping("/buscar")

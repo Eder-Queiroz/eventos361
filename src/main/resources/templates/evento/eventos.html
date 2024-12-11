@@ -57,6 +57,11 @@
                     <input type="hidden" name="codigo" th:value="${evento.codigo}" />
                     <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none">Finalizar</button>
                   </form>
+                  <form th:hx-post="@{/eventos/participar}" hx-target="#main" hx-swap="outerHTML"
+                        th:hx-confirm="${'Quer participar do evento ' + evento.nome + '!'}">
+                    <input type="hidden" name="codigo" th:value="${evento.codigo}" />
+                    <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:outline-none focus:bg-emerald-200 disabled:opacity-50 disabled:pointer-events-none">Participar</button>
+                  </form>
                 </td>
               </tr>
             </tbody>
