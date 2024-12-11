@@ -31,7 +31,8 @@
                 <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Local</th>
                 <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Capacidade</th>
                 <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Palestrantes</th>
-                <th sec:authorize="hasAuthority('PALESTRANTE')" scope="col" colspan="2" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
+                <!-- Ações agora sempre visível para todos os usuários -->
+                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -42,31 +43,37 @@
                 <td th:text="${evento.local}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
                 <td th:text="${evento.capacidade}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">11</td>
                 <td th:text="${evento.usuario.nome}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">John</td>
-                <td sec:authorize="hasAuthority('PALESTRANTE')" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 flex gap-2 justify-center">
-                  <form th:if="${evento.usuario.nomeUsuario == #authentication.name}" 
-                        th:hx-post="@{/eventos/abriralterar}" 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 flex gap-2 justify-center">
+                  <!-- Ações para Palestrantes que são donos do evento -->
+                  <div sec:authorize="hasAuthority('PALESTRANTE')" 
+                       th:if="${evento.usuario.nomeUsuario == #authentication.name}" 
+                       class="flex gap-2">
+                       <form th:hx-post="@{/eventos/abriralterar}" 
+                             hx-target="#main" 
+                             hx-swap="outerHTML">
+                           <input type="hidden" name="codigo" th:value="${evento.codigo}" />
+                           <input type="hidden" name="nome" th:value="${evento.nome}" />
+                           <input type="hidden" name="dataEvento" th:value="${{evento.dataEvento}}" />
+                           <input type="hidden" name="local" th:value="${evento.local}" />
+                           <input type="hidden" name="capacidade" th:value="${evento.capacidade}" />
+                           <input type="hidden" name="usuario.nome" th:value="${evento.usuario.nome}" />
+                           <input type="hidden" name="usuario.nomeUsuario" th:value="${evento.usuario.nomeUsuario}" />
+                           <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none">Alterar</button>
+                       </form>
+                      <form th:hx-post="@{/eventos/finalizar}" 
+                            hx-target="#main" 
+                            hx-swap="outerHTML"
+                            th:hx-confirm="${'Você vai finalizar o evento ' + evento.nome + '!'}">
+                            <input type="hidden" name="codigo" th:value="${evento.codigo}" />
+                            <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none">Finalizar</button>
+                      </form>
+                  </div>
+                  <!-- Ação para Todos os Usuários -->
+                  <form th:hx-post="@{/eventos/participar}" 
                         hx-target="#main" 
                         hx-swap="outerHTML">
-                    <input type="hidden" name="codigo" th:value="${evento.codigo}" />
-                    <input type="hidden" name="nome" th:value="${evento.nome}" />
-                    <input type="hidden" name="dataEvento" th:value="${{evento.dataEvento}}" />
-                    <input type="hidden" name="local" th:value="${evento.local}" />
-                    <input type="hidden" name="capacidade" th:value="${evento.capacidade}" />
-                    <input type="hidden" name="usuario.nome" th:value="${{evento.usuario.nome}}" />
-                    <input type="hidden" name="usuario.nomeUsuario" th:value="${{evento.usuario.nomeUsuario}}" />
-                    <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none">Alterar</button>
-                  </form>
-                  <form th:if="${evento.usuario.nomeUsuario == #authentication.name}" 
-                        th:hx-post="@{/eventos/finalizar}" 
-                        hx-target="#main" 
-                        hx-swap="outerHTML"
-                        th:hx-confirm="${'Você vai finalizar o evento ' + evento.nome + '!'}">
-                    <input type="hidden" name="codigo" th:value="${evento.codigo}" />
-                    <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none">Finalizar</button>
-                  </form>
-                  <form th:hx-post="@{/eventos/participar}" hx-target="#main" hx-swap="outerHTML">
-                    <input type="hidden" name="codigo" th:value="${evento.codigo}" />
-                    <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:outline-none focus:bg-emerald-200 disabled:opacity-50 disabled:pointer-events-none">Participar</button>
+                      <input type="hidden" name="codigo" th:value="${evento.codigo}" />
+                      <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:outline-none focus:bg-emerald-200 disabled:opacity-50 disabled:pointer-events-none">Participar</button>
                   </form>
                 </td>
               </tr>
