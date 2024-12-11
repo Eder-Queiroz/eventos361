@@ -93,6 +93,12 @@ public class Evento {
         this.usuario = usuario;
     }
 
+    public void finalizar() {
+        if(finalizouEm == null) {
+            finalizouEm = LocalDate.now();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

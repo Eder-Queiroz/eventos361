@@ -159,4 +159,23 @@ public class EventoController {
         return "evento/pesquisar :: formulario";
     }
 
+    @HxRequest
+    @HxTriggerAfterSwap("htmlAtualizado")
+    @PostMapping("/finalizar")
+    public String finalizarHTMX(Long codigo, Model model) {
+
+        logger.info("Finalizando o evento com o código: {}", codigo);
+
+        Evento evento = eventoService.buscarPorCodigo(codigo);
+        evento.finalizar();
+        eventoService.alterar(evento);
+
+        logger.info("Evento finalizado: {}", evento);
+
+        model.addAttribute("notificacao", new NotificacaoSweetAlert2("Evento encerrado com sucesso!",
+                TipoNotificaoSweetAlert2.SUCCESS, 4000));
+
+        return "evento/pesquisar :: formulario";
+    }
+
 }

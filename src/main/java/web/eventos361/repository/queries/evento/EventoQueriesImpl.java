@@ -33,56 +33,30 @@ public class EventoQueriesImpl implements EventoQueries {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Evento> criteriaQuery = builder.createQuery(Evento.class);
         Root<Evento> v = criteriaQuery.from(Evento.class);
-        TypedQuery<Evento> typedQuery;
+        v.alias("eventoAlias");
+
         List<Predicate> predicateList = new ArrayList<>();
-        List<Predicate> predicateListTotal = new ArrayList<>();
-        Predicate[] predArray;
-        Predicate[] predArrayTotal;
         if (filtro.getCodigo() != null) {
-            predicateList.add(builder.equal(v.<Long>get("codigo"), filtro.getCodigo()));
+            predicateList.add(builder.equal(v.get("codigo"), filtro.getCodigo()));
         }
         if (StringUtils.hasText(filtro.getNome())) {
-            predicateList.add(builder.like(builder.lower(v.<String>get("nome")),
-                    "%" + filtro.getNome().toLowerCase() + "%"));
+            predicateList.add(builder.like(builder.lower(v.get("nome")), "%" + filtro.getNome().toLowerCase() + "%"));
         }
         if (StringUtils.hasText(filtro.getLocal())) {
-            predicateList.add(builder.like(builder.lower(v.<String>get("local")),
-                    "%" + filtro.getLocal().toLowerCase() + "%"));
+            predicateList.add(builder.like(builder.lower(v.get("local")), "%" + filtro.getLocal().toLowerCase() + "%"));
         }
 //        predicateList.add(builder.isNull(v.get("finalizouEm")));
 
-        predArray = new Predicate[predicateList.size()];
-        predicateList.toArray(predArray);
-        criteriaQuery.select(v).where(predArray);
-        PaginacaoUtil.prepararOrdem(v, criteriaQuery, builder, pageable);
-        typedQuery = em.createQuery(criteriaQuery);
+        criteriaQuery.select(v).where(predicateList.toArray(new Predicate[0]));
+        TypedQuery<Evento> typedQuery = em.createQuery(criteriaQuery);
         PaginacaoUtil.prepararIntervalo(typedQuery, pageable);
-        typedQuery.setHint("hibernate.query.passDistinctThrough", false);
-        List<Evento> vacinas = typedQuery.getResultList();
-        logger.info("Calculando o total de registros que o filtro retornará.");
-        CriteriaQuery<Long> criteriaQueryTotal = builder.createQuery(Long.class);
-        Root<Evento> vTotal = criteriaQueryTotal.from(Evento.class);
-        criteriaQueryTotal.select(builder.count(vTotal));
-        if (filtro.getCodigo() != null) {
-            predicateListTotal.add(builder.equal(vTotal.<Long>get("codigo"), filtro.getCodigo()));
-        }
-        if (StringUtils.hasText(filtro.getNome())) {
-            predicateListTotal.add(builder.like(builder.lower(vTotal.<String>get("nome")),
-                    "%" + filtro.getNome().toLowerCase() + "%"));
-        }
-        if (StringUtils.hasText(filtro.getLocal())) {
-            predicateListTotal.add(builder.like(builder.lower(vTotal.<String>get("local")),
-                    "%" + filtro.getLocal().toLowerCase() + "%"));
-        }
-//        predicateListTotal.add(builder.isNull(v.get("finalizouEm")));
+        List<Evento> eventos = typedQuery.getResultList();
 
-        predArrayTotal = new Predicate[predicateListTotal.size()];
-        predicateListTotal.toArray(predArrayTotal);
-        criteriaQueryTotal.where(predArrayTotal);
-        TypedQuery<Long> typedQueryTotal = em.createQuery(criteriaQueryTotal);
-        long totalVacinas = typedQueryTotal.getSingleResult();
-        logger.info("O filtro retornará {} registros.", totalVacinas);
-        Page<Evento> page = new PageImpl<>(vacinas, pageable, totalVacinas);
-        return page;
+        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
+        Root<Evento> countRoot = countQuery.from(Evento.class);
+        countQuery.select(builder.count(countRoot)).where(predicateList.toArray(new Predicate[0]));
+        Long total = em.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(eventos, pageable, total);
     }
 }
