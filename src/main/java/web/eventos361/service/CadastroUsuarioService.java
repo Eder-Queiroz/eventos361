@@ -17,4 +17,9 @@ public class CadastroUsuarioService {
 	public void salvar(Usuario usuario) {
 		usuarioRepository.save(usuario);
 	}
+
+	@Transactional
+	public Usuario pesquisarPorNome(String nomeUsuario) {
+		return usuarioRepository.findByNomeUsuarioIgnoreCase(nomeUsuario);
+	}
 }

@@ -1,7 +1,5 @@
 package web.eventos361.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,11 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTriggerAfterSwap;
 import jakarta.validation.Valid;
-import web.eventos361.model.Papel;
 import web.eventos361.model.Usuario;
 import web.eventos361.notificacao.NotificacaoSweetAlert2;
 import web.eventos361.notificacao.TipoNotificaoSweetAlert2;
-import web.eventos361.repository.PapelRepository;
 import web.eventos361.service.CadastroUsuarioService;
 
 @Controller
@@ -29,14 +25,12 @@ import web.eventos361.service.CadastroUsuarioService;
 public class UsuarioController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
-	
-	private PapelRepository papelRepository;
+
 	private CadastroUsuarioService cadastroUsuarioService;
 	private PasswordEncoder passwordEncoder;
 	
-	public UsuarioController(PapelRepository papelRepository, CadastroUsuarioService cadastroUsuarioService,
+	public UsuarioController(CadastroUsuarioService cadastroUsuarioService,
 			PasswordEncoder passwordEncoder) {
-		this.papelRepository = papelRepository;
 		this.cadastroUsuarioService = cadastroUsuarioService;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -45,8 +39,6 @@ public class UsuarioController {
 	@HxRequest
 	@HxTriggerAfterSwap("htmlAtualizado")
 	public String abrirCadastroUsuario(Usuario usuario, Model model) {
-		List<Papel> papeis = papelRepository.findAll();
-		model.addAttribute("todosPapeis", papeis);
 		return "usuario/cadastrar :: formulario";
 	}
 	
@@ -54,16 +46,16 @@ public class UsuarioController {
 	@HxRequest
 	@HxTriggerAfterSwap("htmlAtualizado")
 	public String cadastrarNovoUsuario(@Valid Usuario usuario, BindingResult resultado, Model model, RedirectAttributes redirectAttributes) {
+		logger.info("Recebendo um novo usuário para cadastrar: {}", usuario);
 		if (resultado.hasErrors()) {
 			logger.info("O usuario recebido para cadastrar não é válido.");
 			logger.info("Erros encontrados:");
 			for (FieldError erro : resultado.getFieldErrors()) {
 				logger.info("{}", erro);
 			}
-			List<Papel> papeis = papelRepository.findAll();
-			model.addAttribute("todosPapeis", papeis);
 			return "usuario/cadastrar :: formulario";
 		} else {
+			logger.info("O usuario recebido para cadastrar é válido.");
 			usuario.setAtivo(true);
 			usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 			cadastroUsuarioService.salvar(usuario);
@@ -76,8 +68,6 @@ public class UsuarioController {
 	@HxRequest
 	@HxTriggerAfterSwap("htmlAtualizado") 
 	public String mostrarCadastroSucesso(String mensagem, Usuario usuario, Model model) {
-		List<Papel> papeis = papelRepository.findAll();
-		model.addAttribute("todosPapeis", papeis);
 		if (mensagem != null && !mensagem.isEmpty()) {
             model.addAttribute("notificacao", new NotificacaoSweetAlert2(mensagem,
                     TipoNotificaoSweetAlert2.SUCCESS, 4000));

@@ -27,20 +27,23 @@ public class SecurityConfig {
                                                 // Qualquer um pode fazer requisições para essas URLs
                                                 .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/index.html")
                                                 .permitAll()
+                                                .requestMatchers("usuarios/cadastrar").permitAll()
+                                                .requestMatchers("eventos/novo").hasAuthority("PALESTRANTE")
+                                                .requestMatchers("eventos/abriralterar").hasAuthority("PALESTRANTE")
                                                 // Um usuário autenticado e com o papel ADMIN pode fazer requisições
                                                 // para essas
                                                 // URLs
-                                                .requestMatchers("/vacinas/nova").hasRole("ADMIN")
-                                                .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
-                                                // .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
-                                                .anyRequest().permitAll())
+//                                                .requestMatchers("/vacinas/nova").hasRole("ADMIN")
+//                                                .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
+//                                                 .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
+                                                .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 // Uma página de login customizada
                                                 .loginPage("/login")
                                                 // Define a URL para onde o usuário será redirecionado após o login
                                                 .defaultSuccessUrl("/index.html")
                                                 // Define a URL para o caso de falha no login
-                                                // .failureUrl("/login-error")
+//                                                 .failureUrl("/index.html")
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
@@ -57,14 +60,9 @@ public class SecurityConfig {
         @Bean
         public UserDetailsService userDetailsService(DataSource dataSource) {
                 JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-                manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo "
-                                + "from usuario "
-                                + "where nome_usuario = ?");
-                manager.setAuthoritiesByUsernameQuery(
-                                "SELECT tab.nome_usuario , papel.nome FROM"
-                                                + "(SELECT usuario.nome_usuario , usuario.codigo FROM usuario WHERE nome_usuario = ?) as tab "
-                                                + " INNER JOIN usuario_papel ON codigo_usuario = tab.codigo "
-                                                + " INNER JOIN papel ON codigo_papel = papel.codigo;");
+                manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo from usuario where nome_usuario = ?");
+                // Defina uma consulta de authorities vazia para garantir que não seja usada
+                manager.setAuthoritiesByUsernameQuery("select nome_usuario, case when is_palestrante = true then 'PALESTRANTE' else 'ROLE_USER' end as role from usuario where nome_usuario = ?");
                 return manager;
         }
 

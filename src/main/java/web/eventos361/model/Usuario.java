@@ -4,17 +4,9 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -45,10 +37,10 @@ public class Usuario implements Serializable {
 	@NotNull(message = "A data de nascimento do usuário é obrigatória")
 	private LocalDate dataNascimento;
 	private boolean ativo;
-	@ManyToMany
-	@JoinTable(name = "usuario_papel", joinColumns = @JoinColumn(name = "codigo_usuario"), inverseJoinColumns = @JoinColumn(name = "codigo_papel"))
-	@Size(min = 1, message = "O usuário deve ter ao menos um papel no sistema")
-	private List<Papel> papeis = new ArrayList<>();
+	@Column(name = "is_palestrante")
+	private boolean isPalestrante;
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Evento> eventos = new ArrayList<>();
 
 	public Long getCodigo() {
 		return codigo;
@@ -106,50 +98,31 @@ public class Usuario implements Serializable {
 		this.ativo = ativo;
 	}
 
-	public void adicionarPapel(Papel papel) {
-		papeis.add(papel);
+	public List<Evento> getEventos() {
+		return eventos;
 	}
 
-	public void removerPapel(Papel papel) {
-		papeis.remove(papel);
+	public void setEventos(List<Evento> eventos) {
+		this.eventos = eventos;
 	}
 
-	public List<Papel> getPapeis() {
-		return papeis;
+	public boolean isPalestrante() {
+		return isPalestrante;
 	}
 
-	public void setPapeis(List<Papel> papeis) {
-		this.papeis = papeis;
+	public void setPalestrante(boolean palestrante) {
+		isPalestrante = palestrante;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		Usuario usuario = (Usuario) o;
+		return ativo == usuario.ativo && isPalestrante == usuario.isPalestrante && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
-		return result;
+		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, isPalestrante, eventos);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		if (codigo == null) {
-			if (other.codigo != null)
-				return false;
-		} else if (!codigo.equals(other.codigo))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "codigo: " + codigo + "\nnome: " + nome + "\nemail: " + email + "\nsenha: " + senha + "\nusuario: " + nomeUsuario + "\ndataNascimento: " + dataNascimento + "\nativo: " + ativo;
-	}
-
 }
