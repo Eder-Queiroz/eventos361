@@ -76,6 +76,13 @@
                       <input type="hidden" name="codigo" th:value="${evento.codigo}" />
                       <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:outline-none focus:bg-emerald-200 disabled:opacity-50 disabled:pointer-events-none">Participar</button>
                   </form>
+                    <form th:hx-post="@{/participantes/ver}"
+                          hx-target="#main"
+                          hx-swap="outerHTML"
+                          >
+                        <input type="hidden" name="idEvento" th:value="${evento.codigo}" />
+                        <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-zinc-300 text-black hover:bg-zinc-400 focus:outline-none focus:bg-zinc-400 disabled:opacity-50 disabled:pointer-events-none">Ver</button>
+                    </form>
                 </td>
               </tr>
             </tbody>
