@@ -52,7 +52,7 @@ public class ParticipanteQueriesImpl implements ParticipanteQueries {
 
     private List<Predicate> criarParticipantePredicados(Long idEvento, CriteriaBuilder builder, Root<Participante> root) {
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(root.get("evento"), idEvento));
+        predicates.add(builder.equal(root.get("evento").get("id"), idEvento));
         return predicates;
     }
 

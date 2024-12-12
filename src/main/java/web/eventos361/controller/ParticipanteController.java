@@ -41,17 +41,18 @@ public class ParticipanteController {
     @PostMapping("/ver")
     public String verParticipantes(Long idEvento, Model model, @PageableDefault(size = 7) @SortDefault(sort = "codigo", direction = Sort.Direction.ASC) Pageable pageable,
                                    HttpServletRequest request) {
-//        try {
+        try {
             logger.info("buscando participantes do evento {}", idEvento);
             Page<Participante> participantes = participanteRepository.pesquisar(idEvento, pageable);
             PageWrapper<Participante> paginaWrapper = new PageWrapper<>(participantes, request);
+            logger.info("participantes encontrados: {}", paginaWrapper.getConteudo());
             model.addAttribute("pagina", paginaWrapper);
-            return "participante/ver :: formulario";
-//        }catch (Exception e) {
-//            logger.error("Erro ao buscar participantes: {}", e);
-//            model.addAttribute("notificacao", new NotificacaoSweetAlert2("Erro ao buscar participantes",
-//                    TipoNotificaoSweetAlert2.ERROR, 4000));
-//            return "evento/pesquisar :: formulario";
-//        }
+            return "participante/ver :: tabela";
+        }catch (Exception e) {
+            logger.error("Erro ao buscar participantes: {}", e);
+            model.addAttribute("notificacao", new NotificacaoSweetAlert2("Erro ao buscar participantes",
+                    TipoNotificaoSweetAlert2.ERROR, 4000));
+            return "evento/pesquisar :: formulario";
+        }
     }
 }
