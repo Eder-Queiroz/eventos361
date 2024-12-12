@@ -56,4 +56,35 @@ public class ParticipanteQueriesImpl implements ParticipanteQueries {
         return predicates;
     }
 
+    @Override
+    public Page<Participante> pesquisarEventosParticipados(Long idUsuario, Pageable pageable) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+
+        // Consulta principal
+        CriteriaQuery<Participante> criteriaQuery = builder.createQuery(Participante.class);
+        Root<Participante> v = criteriaQuery.from(Participante.class);
+        v.alias("participanteAlias");
+        List<Predicate> predicates = criarParticipantePredicadosEventosParticipados(idUsuario, builder, v);
+        criteriaQuery.select(v).where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Participante> typedQuery = em.createQuery(criteriaQuery);
+        PaginacaoUtil.prepararIntervalo(typedQuery, pageable);
+        List<Participante> participantes = typedQuery.getResultList();
+
+        // Consulta de contagem
+        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
+        Root<Participante> countRoot = countQuery.from(Participante.class);
+        List<Predicate> countParticipantePredicates = criarParticipantePredicadosEventosParticipados(idUsuario, builder, countRoot);
+        countQuery.select(builder.count(countRoot)).where(countParticipantePredicates.toArray(new Predicate[0]));
+        Long total = em.createQuery(countQuery).getSingleResult();
+
+        return new PageImpl<>(participantes, pageable, total);
+    }
+
+    private List<Predicate> criarParticipantePredicadosEventosParticipados(Long idEvento, CriteriaBuilder builder, Root<Participante> root) {
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("usuario").get("id"), idEvento));
+        predicates.add(builder.isNotNull(root.get("evento").get("finalizouEm")));
+        return predicates;
+    }
+
 }

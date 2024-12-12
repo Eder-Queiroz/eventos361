@@ -1,0 +1,55 @@
+<!-- FILE: src/main/resources/templates/evento/eventos.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR"
+      layout:decorate="~{layout/layoutpadrao}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Participantes</title>
+</head>
+<body>
+<!-- conteudo principal -->
+<main layout:fragment="conteudo" th:fragment="tabela" id="main" class="flex flex-col w-full">
+    <h1 class="text-3xl mt-10 ml-10">Participantes</h1>
+
+    <h1 th:if="${pagina.vazia}" class="mt-10 ml-10 text-2xl">Você ainda não participou de nenhum evento</h1>
+
+    <div th:if="${not pagina.vazia}" class="flex flex-col ml-10 md:w-4/5">
+        <div class="-m-1.5 overflow-x-auto mt-5">
+            <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="border rounded-xl overflow-hidden shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                        <tr>
+                            <th th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'evento.nome', 'Nome', '')}"></th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Data</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Local</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Data de termino</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Palestrante</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="participante : ${pagina.conteudo}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                            <td th:text="${participante.evento.nome}" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
+                            <td th:text="${{participante.evento.dataEvento}}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">22/22/2222</td>
+                            <td th:text="${participante.evento.local}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
+                            <td th:text="${{participante.evento.finalizouEm}}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">22/22/2222</td>
+                            <td th:text="${{participante.evento.usuario.nome}}" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div th:replace="~{layout/fragments/paginacao :: paginacao(${pagina})}"></div>
+
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+    </div>
+</main>
+<!-- !conteudo principal -->
+</body>
+</html>
