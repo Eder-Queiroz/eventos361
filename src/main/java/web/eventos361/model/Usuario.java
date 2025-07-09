@@ -9,7 +9,6 @@ import java.util.Objects;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import web.eventos361.service.NomeUsuarioUnicoService;
 import web.eventos361.validation.UniqueValueAttribute;
 
@@ -21,8 +20,8 @@ public class Usuario implements Serializable {
 	private static final long serialVersionUID = 5757384541654785800L; // Gere outro valor
 
 	@Id
-	@SequenceGenerator(name="gerador55", sequenceName="usuario_codigo_seq", allocationSize=1)
-	@GeneratedValue(generator="gerador55", strategy=GenerationType.SEQUENCE)
+	@SequenceGenerator(name = "gerador55", sequenceName = "usuario_codigo_seq", allocationSize = 1)
+	@GeneratedValue(generator = "gerador55", strategy = GenerationType.SEQUENCE)
 	private Long codigo;
 	@NotBlank(message = "O nome do usuário é obrigatório")
 	private String nome;
@@ -38,7 +37,7 @@ public class Usuario implements Serializable {
 	private LocalDate dataNascimento;
 	private boolean ativo;
 	@Column(name = "is_palestrante")
-	private boolean isPalestrante;
+	private boolean palestrante;
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Evento> eventos = new ArrayList<>();
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -109,11 +108,11 @@ public class Usuario implements Serializable {
 	}
 
 	public boolean isPalestrante() {
-		return isPalestrante;
+		return palestrante;
 	}
 
 	public void setPalestrante(boolean palestrante) {
-		isPalestrante = palestrante;
+		this.palestrante = palestrante;
 	}
 
 	public List<Participante> getParticipantes() {
@@ -126,13 +125,19 @@ public class Usuario implements Serializable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Usuario usuario = (Usuario) o;
-		return ativo == usuario.ativo && isPalestrante == usuario.isPalestrante && Objects.equals(codigo, usuario.codigo) && Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email) && Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario) && Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos) && Objects.equals(participantes, usuario.participantes);
+		return ativo == usuario.ativo && palestrante == usuario.palestrante && Objects.equals(codigo, usuario.codigo)
+				&& Objects.equals(nome, usuario.nome) && Objects.equals(email, usuario.email)
+				&& Objects.equals(senha, usuario.senha) && Objects.equals(nomeUsuario, usuario.nomeUsuario)
+				&& Objects.equals(dataNascimento, usuario.dataNascimento) && Objects.equals(eventos, usuario.eventos)
+				&& Objects.equals(participantes, usuario.participantes);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, isPalestrante, eventos, participantes);
+		return Objects.hash(codigo, nome, email, senha, nomeUsuario, dataNascimento, ativo, palestrante, eventos,
+				participantes);
 	}
 }

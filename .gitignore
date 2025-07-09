@@ -441,3 +441,21 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/java,maven,intellij,eclipse,visualstudiocode,netbeans,gradle,git,node
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Environment variables (podem conter senhas)
+.env.local
+.env.production
+.env.staging
+
+# Backup files
+*.sql
+backup/
+dumps/
+
+# Logs
+logs/
+*.log
